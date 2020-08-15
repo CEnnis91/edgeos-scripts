@@ -3,7 +3,7 @@
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
 # shellcheck shell=bash
-. functions
+. functions.sh
 
 if config_exists "system" "package"; then
 	echo "INFO: Debian packages already exist in the config"
