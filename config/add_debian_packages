@@ -1,0 +1,22 @@
+#!/bin/vbash
+# add_debian_packages - add other debian packages
+# https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
+
+# shellcheck shell=bash
+. functions
+
+if config_exists "system" "package"; then
+	echo "INFO: Debian packages already exist in the config"
+    show_config "system" "package"
+	exit 0
+fi
+
+echo "INFO: Adding Debian packages to config"
+source /opt/vyatta/etc/functions/script-template
+
+configure
+set system package repository stretch components 'main contrib non-free'
+set system package repository stretch distribution stretch
+set system package repository stretch url http://http.us.debian.org/debian
+commit
+save
