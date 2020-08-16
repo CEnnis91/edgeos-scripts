@@ -1,32 +1,37 @@
 #!/bin/bash
 # functions
 
-CLI_API="$(command -v cli-shell-api)"
-if [[ -z "$CLI_API" ]]; then
-	echo "ERROR: cannot find cli-shell-api"
+CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
+if [[ ! -e "$CMD_WRAPPER" ]]; then
+	echo "ERROR: cannot find vyatta-cfg-cmd-wrapper"
 	exit 1
 fi
 
-# determines if a node already exists in the active config
-# example: config_exists "system" "package"
-config_exists() {
+check_config() {
 	# shellcheck disable=SC2155
 	local key="$*"
 
 	# shellcheck disable=SC2086
 	# shellcheck disable=SC2155
-	local output="$($CLI_API showConfig $key --show-active-only)"
-    case $output in
-        *is\ empty)		return 1 ;;
-        *not\ valid)	echo "$output"; return 0 ;;
-        *)				return 0 ;;
-    esac
+	local exists="$(exec_config show $key)"
+
+	case $exists in
+		*is\ empty)		return 1 ;;
+		*not\ valid)	echo "$exists"; return 0 ;;
+		*)				return 0 ;;
+	esac
 }
 
-show_config() {
+exec_config() {
 	# shellcheck disable=SC2155
-	local key="$*"
-	
-	# shellcheck disable=SC2086
-	$CLI_API showConfig $key --show-active-only
+	local commands="$*"
+
+	"$CMD_WRAPPER" begin
+	while read -r command; do
+		if [[ -n "$command" && ! $command =~ ^[\ \t]*#.*$ ]]; then
+			# shellcheck disable=SC2086
+			eval "$CMD_WRAPPER" $command
+		fi
+	done < <(echo "$commands")
+	"$CMD_WRAPPER" end
 }

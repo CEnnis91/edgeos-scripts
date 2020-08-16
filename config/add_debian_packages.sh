@@ -3,20 +3,26 @@
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
 # shellcheck shell=bash
+if [[ 'vyattacfg' != "$(id -ng)" ]]; then
+	exec sg vyattacfg -c "$0 $*"
+fi
+
 . functions.sh
 
-if config_exists "system" "package"; then
+if check_config "system package"; then
 	echo "INFO: Debian packages already exist in the config"
-    show_config "system" "package"
+	exec_config "show system package"
 	exit 0
 fi
 
-echo "INFO: Adding Debian packages to config"
-source /opt/vyatta/etc/functions/script-template
+DISTRO="stretch"
+SCRIPT=$(cat <<EOF
+	set system package repository $DISTRO components 'main contrib non-free'
+	set system package repository $DISTRO distribution $DISTRO
+	set system package repository $DISTRO url http://http.us.debian.org/debian
+	commit
+EOF
+)
 
-configure
-set system package repository stretch components 'main contrib non-free'
-set system package repository stretch distribution stretch
-set system package repository stretch url http://http.us.debian.org/debian
-commit
-save
+echo "INFO: Adding Debian packages to config"
+exec_config "$SCRIPT"
