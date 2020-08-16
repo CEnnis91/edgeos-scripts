@@ -1,8 +1,7 @@
-#!/bin/vbash
+#!/bin/bash
 # add_openvpn.sh - add openvpn config
 # https://help.ui.com/hc/en-us/articles/115015971688-EdgeRouter-OpenVPN-Server
 
-# shellcheck shell=bash
 if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi

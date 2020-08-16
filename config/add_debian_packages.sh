@@ -1,8 +1,7 @@
-#!/bin/vbash
+#!/bin/bash
 # add_debian_packages.sh - add other debian packages
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
-# shellcheck shell=bash
 if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi
