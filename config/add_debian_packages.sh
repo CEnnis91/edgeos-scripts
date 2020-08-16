@@ -1,5 +1,5 @@
 #!/bin/vbash
-# add_debian_packages - add other debian packages
+# add_debian_packages.sh - add other debian packages
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
 # shellcheck shell=bash

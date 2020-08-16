@@ -1,5 +1,5 @@
 #!/bin/bash
-# functions
+# functions.sh
 
 CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
 if [[ ! -e "$CMD_WRAPPER" ]]; then
