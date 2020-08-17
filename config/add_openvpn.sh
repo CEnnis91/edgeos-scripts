@@ -65,16 +65,16 @@ SCRIPT=$(cat <<EOF
     # add openvpn options (optional)
     set interfaces openvpn $INTERFACE openvpn-option "--port $PORT"
     set interfaces openvpn $INTERFACE openvpn-option --duplicate-cn
-    set interfaces openvpn $INTERFACE openvpn-option --persist-key
-    set interfaces openvpn $INTERFACE openvpn-option --persist-tun
     set interfaces openvpn $INTERFACE openvpn-option "--user nobody"
     set interfaces openvpn $INTERFACE openvpn-option "--group nogroup"
+    set interfaces openvpn $INTERFACE openvpn-option --persist-key
+    set interfaces openvpn $INTERFACE openvpn-option --persist-tun
     set interfaces openvpn $INTERFACE openvpn-option "--cipher AES-256-CBC"
 
     # generate using /usr/sbin/openvpn --genkey --secret ta.key
     set interfaces openvpn $INTERFACE openvpn-option "--tls-auth /config/auth/ta.key 0"
 
-    show
+    commit
 EOF
 )
 
