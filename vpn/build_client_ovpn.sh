@@ -7,17 +7,17 @@ HOST="$1"
 CLIENT_PEM="$2"
 CLIENT_KEY="$3"
 TEMPLATE="${4:-template.ovpn}"
+CONFIG_AUTH="${5:-/config/auth}"
 
 # ensure the arguments are correct
 # other variables can be changed at the command line
 if [[ -z "$HOST" || -z "$CLIENT_PEM" || -z "$CLIENT_KEY" ]]; then
     echo "ERROR: invalid arguments"
-    echo "$(basename "$0") <template> <host> <client certificate (*.pem)> <client key (*.key) [template]>"
+    echo "$(basename "$0") <host> <client certificate (*.pem)> <client key (*.key)> [template] [config dir]"
     exit 1
 fi
 
 # ensure that cert files exist
-CONFIG_AUTH="/config/auth"
 FILES=( "${CONFIG_AUTH}/cacert.pem" "${CONFIG_AUTH}/ta.key" "$CLIENT_PEM" "$CLIENT_KEY" )
 for file in "${FILES[@]}"; do
     if [[ ! -e "${file}" ]]; then

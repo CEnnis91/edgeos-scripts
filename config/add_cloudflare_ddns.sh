@@ -2,21 +2,6 @@
 # add_cloudflare_dyndns.sh - adds dynamic dns entry for cloudflare
 # https://help.ui.com/hc/en-us/articles/204976324-EdgeRouter-Custom-Dynamic-DNS
 
-vyatta_ddns() {
-    local action="$1"
-    local interface="$2"
-
-    local vyatta_ddns="/opt/vyatta/bin/sudo-users/vyatta-op-dynamic-dns.pl"
-    if [[ ! -e "$vyatta_ddns" ]]; then
-        echo "ERROR: cannot find vyatta-op-dynamic-dns.pl"
-        exit 1
-    fi
-
-    case "$action" in
-        show)   
-    esac
-}
-
 if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi
