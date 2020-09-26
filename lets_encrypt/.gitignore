@@ -1,0 +1,8 @@
+# .gitignore
+*
+!.gitignore
+
+!*.sh
+!dnsapi/
+!dnsapi/*
+
