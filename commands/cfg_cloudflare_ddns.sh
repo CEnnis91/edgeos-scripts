@@ -1,12 +1,14 @@
 #!/bin/bash
-# add_cloudflare_dyndns.sh - adds dynamic dns entry for cloudflare
+# cfg_cloudflare_ddns.sh - adds dynamic dns entry for cloudflare
+# other services can be added from the web interface, this still uses ddclient
 # https://help.ui.com/hc/en-us/articles/204976324-EdgeRouter-Custom-Dynamic-DNS
 
 if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi
 
-. functions.sh
+# shellcheck disable=SC1091
+. "functions/vyatta.sh"
 
 SUBDOMAIN="$1"
 LOGIN="$2"
@@ -41,7 +43,7 @@ SCRIPT=$(cat <<EOF
 EOF
 )
 
-echo "INFO: Adding dynamic DNS service for $SUBDOMAIN to config"
+echo "INFO: Adding dynamic DNS service for $SUBDOMAIN to the config"
 echo "INFO: To show the status use: 'show dns dynamic status'"
 echo "INFO: To force update the values use: 'update dns dynamic interface $INTERFACE'"
 exec_config "$SCRIPT"

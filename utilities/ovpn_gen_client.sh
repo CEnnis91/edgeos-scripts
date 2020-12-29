@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2034
-# build_client_ovpn.sh - create a client ovpn config for a user
+# ovpn_gen_client.sh - create a client ovpn config for a user
 # https://help.ui.com/hc/en-us/articles/115015971688-EdgeRouter-OpenVPN-Server
 
 HOST="$1"

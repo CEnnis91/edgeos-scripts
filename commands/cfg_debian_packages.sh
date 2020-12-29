@@ -1,5 +1,5 @@
 #!/bin/bash
-# add_debian_packages.sh - add other debian packages
+# cfg_debian_packages.sh - add other debian packages
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
 # included from functions.sh for easier integration before git is installed
@@ -50,7 +50,7 @@ if check_config "system package"; then
     exit 0
 fi
 
-DISTRO="stretch"
+DISTRO="${1:-stretch}"
 SCRIPT=$(cat <<EOF
     set system package repository $DISTRO components 'main contrib non-free'
     set system package repository $DISTRO distribution $DISTRO
@@ -59,5 +59,5 @@ SCRIPT=$(cat <<EOF
 EOF
 )
 
-echo "INFO: Adding Debian packages to config"
+echo "INFO: Adding Debian packages to the config"
 exec_config "$SCRIPT"
