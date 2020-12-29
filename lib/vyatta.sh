@@ -1,7 +1,7 @@
 #!/bin/bash
 # vyatta.sh - vyatta specific functions
 
-__SELF_DIR="$(dirname "$(readlink -f "$0")")"
+__SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC1090
 . "${__SELF_DIR}/globals.sh"
 

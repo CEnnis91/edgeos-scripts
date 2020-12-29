@@ -2,7 +2,7 @@
 # shellcheck disable=SC1090,SC2154
 # acme.sh - acme.sh related functions
 
-__SELF_DIR="$(dirname "$(readlink -f "$0")")"
+__SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC1090
 . "${__SELF_DIR}/globals.sh"
 

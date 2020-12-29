@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034
 # globals.sh
 
-__SELF_DIR="$(dirname "$(readlink -f "$0")")"
+__SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 __ROOT_DIR="$(dirname "$(dirname "${__SELF_DIR}")")"
 
 BIN_DIR="${__ROOT_DIR}/bin"
