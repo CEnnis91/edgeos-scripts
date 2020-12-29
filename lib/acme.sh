@@ -2,8 +2,9 @@
 # shellcheck disable=SC1090,SC2154
 # acme.sh - acme.sh related functions
 
+__SELF_DIR="$(dirname "$(readlink -f "$0")")"
 # shellcheck disable=SC1090
-. "$(dirname "$0")/globals.sh"
+. "${__SELF_DIR}/globals.sh"
 
 ACME_REVISION="2.8.8"
 SUPPORT_AWS="1"

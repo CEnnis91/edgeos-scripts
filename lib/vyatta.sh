@@ -1,8 +1,9 @@
 #!/bin/bash
 # vyatta.sh - vyatta specific functions
 
+__SELF_DIR="$(dirname "$(readlink -f "$0")")"
 # shellcheck disable=SC1090
-. "$(dirname "$0")/globals.sh"
+. "${__SELF_DIR}/globals.sh"
 
 CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
 if [[ ! -e "$CMD_WRAPPER" ]]; then
