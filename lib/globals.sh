@@ -3,7 +3,7 @@
 # globals.sh
 
 __SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-__ROOT_DIR="$(dirname "$(dirname "${__SELF_DIR}")")"
+__ROOT_DIR="$(dirname "${__SELF_DIR}")"
 
 BIN_DIR="${__ROOT_DIR}/bin"
 ETC_DIR="${__ROOT_DIR}/etc"
