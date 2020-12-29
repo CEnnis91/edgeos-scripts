@@ -1,8 +1,8 @@
 #!/bin/bash
 # openvpn.sh - openvpn specific functions
 
-# shellcheck disable=SC1091
-. "globals.sh"
+# shellcheck disable=SC1090
+. "$(dirname "$0")/globals.sh"
 
 DEFAULT_INTERFACE="vtun0"
 DEFAULT_TEMPLATE="basic"

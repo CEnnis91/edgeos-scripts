@@ -1,8 +1,8 @@
 #!/bin/bash
 # vyatta.sh - vyatta specific functions
 
-# shellcheck disable=SC1091
-. "globals.sh"
+# shellcheck disable=SC1090
+. "$(dirname "$0")/globals.sh"
 
 CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
 if [[ ! -e "$CMD_WRAPPER" ]]; then

@@ -2,8 +2,8 @@
 # shellcheck disable=SC1090,SC2154
 # acme.sh - acme.sh related functions
 
-# shellcheck disable=SC1091
-. "globals.sh"
+# shellcheck disable=SC1090
+. "$(dirname "$0")/globals.sh"
 
 ACME_REVISION="2.8.8"
 SUPPORT_AWS="1"
@@ -13,7 +13,10 @@ ACME_SOURCE="$(mktemp)"
 DNSAPI_DIR="${ACME_DIR}/dnsapi"
 
 RELOAD_DIR="${BIN_DIR}/reload"
+
+# shellcheck disable=SC2034
 RELOAD_BIN="${RELOAD_DIR}/update_webui.sh"
+# shellcheck disable=SC2034
 RENEW_BIN="${BIN_DIR}/acme_renew.sh"
 
 get_acme_sh() {
