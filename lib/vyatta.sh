@@ -1,6 +1,9 @@
 #!/bin/bash
 # vyatta.sh - vyatta specific functions
 
+# shellcheck disable=SC1091
+. "globals.sh"
+
 CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
 if [[ ! -e "$CMD_WRAPPER" ]]; then
     echo "ERROR: cannot find vyatta-cfg-cmd-wrapper"

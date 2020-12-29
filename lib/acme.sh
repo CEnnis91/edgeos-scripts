@@ -2,13 +2,19 @@
 # shellcheck disable=SC1090,SC2154
 # acme.sh - acme.sh related functions
 
+# shellcheck disable=SC1091
+. "globals.sh"
+
 ACME_REVISION="2.8.8"
 SUPPORT_AWS="1"
 
-SELF_DIR="$(dirname "$(readlink -f "$0")")"
-ROOT_DIR="$(dirname "$(dirname "$SELF_DIR")")"
-ACME_DIR="${ROOT_DIR}/secure/acme"
+ACME_DIR="${ETC_DIR}/acme"
+ACME_SOURCE="$(mktemp)"
 DNSAPI_DIR="${ACME_DIR}/dnsapi"
+
+RELOAD_DIR="${BIN_DIR}/reload"
+RELOAD_BIN="${RELOAD_DIR}/update_webui.sh"
+RENEW_BIN="${BIN_DIR}/acme_renew.sh"
 
 get_acme_sh() {
     local revision="${1:-master}"
@@ -44,13 +50,11 @@ get_acme_dnsapi() {
 
 # soft source acme.sh to gain access to functions
 # this will be somewhat prone to breaking
-ACME_SOURCE="$(mktemp)"
 get_acme_sh "$ACME_REVISION"
 cp -f "${ACME_DIR}/acme.sh" "$ACME_SOURCE"
 sed -i 's/^\(main "$@"\)$/# \1/g' "$ACME_SOURCE"
 
 . "$ACME_SOURCE"
-
 if [[ "$SUPPORT_AWS" == "1" ]]; then
     get_acme_dnsapi "$ACME_REVISION" "aws"
     . "${DNSAPI_DIR}/dns_aws.sh"

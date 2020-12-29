@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC1091
 # cfg_letsencrypt_cert.sh - request for and renew let's encrypt certificate
 # https://github.com/hungnguyenm/edgemax-acme
 
@@ -6,8 +7,15 @@ if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi
 
-# shellcheck disable=SC1091
-. "functions/vyatta.sh"
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+ROOT_DIR="$(dirname "$SELF_DIR")"
+
+. "${ROOT_DIR}/lib/acme.sh"
+. "${ROOT_DIR}/lib/vyatta.sh"
+
+GUI_SERVER_PEM="${ETC_DIR}/ssl"
+RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
+RENEW_TASK="renew.${SUBDOMAIN}"
 
 SUBDOMAIN="$1"
 PROVIDER="$2"
@@ -25,7 +33,7 @@ fi
 # NOTE: not every provider has been tested, please read full documentation
 # easily add other providers from here: https://github.com/acmesh-official/acme.sh/wiki/dnsapi
 case "$PROVIDER" in
-    # GENERATED with generate_acme_keys.sh, then tweaked
+    # GENERATED with gen_acme_keys.sh, then tweaked
     1984hosting)    DNS="dns_1984hosting"; KEYS=( One984HOSTING_Password One984HOSTING_Username ) ;;
     acmedns)        DNS="dns_acmedns"; KEYS=( ACMEDNS_PASSWORD ACMEDNS_SUBDOMAIN ACMEDNS_UPDATE_URL ACMEDNS_USERNAME ) ;;
     acmeproxy)      DNS="dns_acmeproxy"; KEYS=( ACMEPROXY_ENDPOINT ACMEPROXY_PASSWORD ACMEPROXY_USERNAME ) ;;
@@ -146,13 +154,8 @@ case "$PROVIDER" in
                     ;;
 esac
 
-SELF_DIR="$(dirname "$(readlink -f "$0")")"
-ROOT_DIR="$(dirname "$SELF_DIR")"
-ACME_DIR="${ROOT_DIR}/secure/acme"
-GUI_SERVER_PEM="${ROOT_DIR}/secure/ssl"
-RENEW_ACME="${ACME_DIR}/acme_renew.sh"
-RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
-RENEW_TASK="renew.${SUBDOMAIN}"
+# ensure we have the provider downloaded
+get_acme_dnsapi "$PROVIDER"
 
 index=0
 for key in "${KEYS[@]}"; do

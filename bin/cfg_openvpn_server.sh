@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090
 # cfg_openvpn_server.sh - add openvpn server config
 # https://help.ui.com/hc/en-us/articles/115015971688-EdgeRouter-OpenVPN-Server
 
@@ -6,27 +7,34 @@ if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi
 
-# shellcheck disable=SC1091
-. "functions/vyatta.sh"
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+ROOT_DIR="$(dirname "$SELF_DIR")"
 
-CERTDIR="$1"
-INTERFACE="$2"
-SUBNET="$3"
-PORT="${4:-1194}"
-NAME_SERVER="${5:-192.168.1.1}"
+. "${ROOT_DIR}/lib/openvpn.sh"
+. "${ROOT_DIR}/lib/vyatta.sh"
+
+INTERFACE="$1"
+SUBNET="$2"
+PORT="${3:-1194}"
+NAME_SERVER="${4:-192.168.1.1}"
+CERT_DIR="$5"
+
+if [[ -z "$CERT_DIR" || ! -d "$CERT_DIR" ]]; then
+    CERT_DIR="$(get_server_dir "$INTERFACE")"
+fi
 
 # ensure the arguments are correct
-if [[ -z "$CERTDIR" || -z "$INTERFACE" || -z "$SUBNET" || -z "$PORT" || -z "$NAME_SERVER" ]]; then
+if [[ -z "$INTERFACE" || -z "$SUBNET" || -z "$PORT" || -z "$NAME_SERVER" || -z "$CERT_DIR" ]]; then
     echo "ERROR: invalid arguments"
-    echo "$(basename "$0") <certificate directory> <interface> <subnet> [port] [name server]"
+    echo "$(basename "$0") <interface> <subnet> [port] [name server] [cert dir]"
     exit 1
 fi
 
 # ensure that cert files exist
 FILES=( 'cacert.pem' 'dh.pem' 'server.key' 'server.pem' )
 for file in "${FILES[@]}"; do
-    if [[ ! -e "${CERTDIR}/${file}" ]]; then
-        echo "ERROR: file '$(basename "${CERTDIR}/${file}")' is missing"
+    if [[ ! -e "${CERT_DIR}/${file}" ]]; then
+        echo "ERROR: file '${CERT_DIR}/${file}' is missing"
         exit 1
     fi
 done
@@ -56,10 +64,10 @@ SCRIPT=$(cat <<EOF
     set interfaces openvpn $INTERFACE server name-server $NAME_SERVER
 
     # add openvpn certificates and keys
-    set interfaces openvpn $INTERFACE tls ca-cert-file ${CERTDIR}/cacert.pem
-    set interfaces openvpn $INTERFACE tls cert-file ${CERTDIR}/server.pem
-    set interfaces openvpn $INTERFACE tls key-file ${CERTDIR}/server.key
-    set interfaces openvpn $INTERFACE tls dh-file ${CERTDIR}/dh.pem
+    set interfaces openvpn $INTERFACE tls ca-cert-file ${CERT_DIR}/cacert.pem
+    set interfaces openvpn $INTERFACE tls cert-file ${CERT_DIR}/server.pem
+    set interfaces openvpn $INTERFACE tls key-file ${CERT_DIR}/server.key
+    set interfaces openvpn $INTERFACE tls dh-file ${CERT_DIR}/dh.pem
 
     # add interface to dns forwarding (optional)
     set service dns forwarding listen-on $INTERFACE
@@ -74,7 +82,7 @@ SCRIPT=$(cat <<EOF
     set interfaces openvpn $INTERFACE openvpn-option "--cipher AES-256-CBC"
 
     # generate using /usr/sbin/openvpn --genkey --secret ta.key
-    set interfaces openvpn $INTERFACE openvpn-option "--tls-auth ${CERTDIR}/ta.key 0"
+    set interfaces openvpn $INTERFACE openvpn-option "--tls-auth ${CERT_DIR}/ta.key 0"
 
     commit
 EOF

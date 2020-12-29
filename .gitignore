@@ -1,3 +1,4 @@
 # .gitignore
 
-secure/
+etc/**
+!etc/.gitignore

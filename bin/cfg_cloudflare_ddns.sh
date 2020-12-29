@@ -7,8 +7,11 @@ if [[ 'vyattacfg' != "$(id -ng)" ]]; then
     exec sg vyattacfg -c "$0 $*"
 fi
 
-# shellcheck disable=SC1091
-. "functions/vyatta.sh"
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+ROOT_DIR="$(dirname "$SELF_DIR")"
+
+# shellcheck disable=SC1090
+. "${ROOT_DIR}/lib/vyatta.sh"
 
 SUBDOMAIN="$1"
 LOGIN="$2"

@@ -4,13 +4,9 @@
 
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
 ROOT_DIR="$(dirname "$SELF_DIR")"
-ACME_DIR="${ROOT_DIR}/secure/acme"
-
-UTIL_DIR="${ROOT_DIR}/utilities"
-ACME_RELOAD="${UTIL_DIR}/acme_reload.sh"
 
 # shellcheck disable=SC1090
-. "${SELF_DIR}/functions/acme.sh"
+. "${ROOT_DIR}/lib/acme.sh"
 
 usage() {
     echo "Usage: $0 -d <mydomain.com> [-d <additionaldomain.com>] -n <dns service>" \
@@ -42,7 +38,7 @@ RELOAD_FLAG=1
 VERBOSE_FLAG=""
 
 # first parse our options
-while getopts ":hivd:n:t:k:r:" opt; do
+while getopts ":hivd:n:t:k:r:s:" opt; do
     case $opt in
         d) DOMAINS+=("$OPTARG");;
         i) INSECURE_FLAG="--insecure";;
@@ -96,7 +92,7 @@ fi
 
 ACME_TEMP="$(mktemp -d)"
 if [ $RELOAD_FLAG -eq 1 ]; then
-    RELOAD_CMD="--reloadcmd \"${ACME_RELOAD} \"${ACME_TEMP}\""
+    RELOAD_CMD="--reloadcmd \"${RELOAD_BIN} \"${ACME_TEMP}\""
 else
     RELOAD_CMD=""
 fi
