@@ -146,10 +146,11 @@ case "$PROVIDER" in
                     ;;
 esac
 
-PARENT_DIR="$(dirname "$(readlink -f "$0")")"
-GUI_SERVER_PEM="/config/ssl/server.pem"
-LETS_ENCRYPT="${PARENT_DIR}/lets_encrypt"
-RENEW_ACME="${LETS_ENCRYPT}/renew_acme.sh"
+SELF_DIR="$(dirname "$(readlink -f "$0")")"
+ROOT_DIR="$(dirname "$SELF_DIR")"
+ACME_DIR="${ROOT_DIR}/secure/acme"
+GUI_SERVER_PEM="${ROOT_DIR}/secure/ssl"
+RENEW_ACME="${ACME_DIR}/acme_renew.sh"
 RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
 RENEW_TASK="renew.${SUBDOMAIN}"
 
