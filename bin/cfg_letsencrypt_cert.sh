@@ -185,7 +185,7 @@ for key in "${KEYS[@]}"; do
 done
 
 echo "INFO: Requesting initial certificate"
-"${RENEW_ACME} ${RENEWAL_ARGS}"
+"${RENEW_BIN} ${RENEWAL_ARGS}"
 
 RESULT="$?"
 if [[ "$RESULT" != "0" ]]; then
@@ -209,7 +209,7 @@ fi
 
 SCRIPT=$(cat <<EOF
     # set renewal task
-    set system task-scheduler task $RENEW_TASK executable path $RENEW_ACME
+    set system task-scheduler task $RENEW_TASK executable path $RENEW_BIN
     set system task-scheduler task $RENEW_TASK interval 1d
     set system task-scheduler task $RENEW_TASK executable arguments "$RENEWAL_ARGS"
     commit
