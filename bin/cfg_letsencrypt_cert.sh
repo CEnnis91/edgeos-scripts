@@ -184,7 +184,7 @@ for key in "${KEYS[@]}"; do
 done
 
 echo "INFO: Requesting initial certificate"
-"${RENEW_BIN} ${RENEWAL_ARGS}"
+"${RENEW_BIN}" ${RENEWAL_ARGS}
 
 RESULT="$?"
 if [[ "$RESULT" != "0" ]]; then

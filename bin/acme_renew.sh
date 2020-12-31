@@ -38,7 +38,7 @@ RELOAD_FLAG=1
 VERBOSE_FLAG=""
 
 # first parse our options
-while getopts ":hivd:n:t:k:r:s:" opt; do
+while getopts ":hivd:n:t:k:r:" opt; do
     case $opt in
         d) DOMAINS+=("$OPTARG");;
         i) INSECURE_FLAG="--insecure";;
@@ -98,11 +98,11 @@ else
 fi
 
 log "Executing acme.sh."
-# shellcheck disable=SC2068
-"${ACME_DIR}/acme.sh" --issue "$DNSARG" "$DOMAINARG" --home "$ACME_DIR" \
-    --keylength ec-384 --keypath "${ACME_TEMP}/server.key" --fullchainpath "${ACME_TEMP}/full.cer" \
-    --log /var/log/acme.log "$RELOAD_CMD" \
-    "$INSECURE_FLAG" "$VERBOSE_FLAG" $@
+# shellcheck disable=SC2068,SC2086
+"${ACME_DIR}/acme.sh" --issue $DNSARG $DOMAINARG --home $ACME_DIR \
+    --keylength ec-384 --keypath ${ACME_TEMP}/server.key --fullchainpath ${ACME_TEMP}/full.cer \
+    --log /var/log/acme.log $RELOAD_CMD \
+    $INSECURE_FLAG $VERBOSE_FLAG $@
 
 log "Starting gui service."
 /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf
