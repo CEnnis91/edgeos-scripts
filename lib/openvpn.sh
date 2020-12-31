@@ -16,8 +16,22 @@ get_server_path() {
 
     if [[ -d "$path" ]]; then
         echo "$path"
+    fi
+}
+
+get_key_path() {
+    local key="$1"
+    local interface="${2:-${DEFAULT_INTERFACE}}"
+
+    local server=""
+    server="$(get_server_path "$interface")"
+
+    if [[ ! -e "$key" ]]; then
+        if [[ -e "${server}/${key}" ]]; then
+            echo "${server}/${key}"
+        fi
     else
-        echo ""
+        echo "$key"
     fi
 }
 
@@ -27,7 +41,5 @@ get_template_path() {
 
     if [[ -e "$path" ]]; then
         echo "$path"
-    else
-        echo ""
     fi
 }
