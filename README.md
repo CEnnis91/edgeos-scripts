@@ -4,18 +4,28 @@ Collection of pure Unix shell scripts and utilities for managing Ubiquiti EdgeMA
 
 # Getting Started
 
-I prefer to install this through git, but you can just ssh an archive over if you want. Git is not a very big package and should be fine even on devices with smaller filesystems like the EdgeRouter-X.
+I prefer to install this through git, but some routers have smaller filesystems, like the EdgeRouter-X, and git can take up a lot of space.
 
 ## Prerequisites
 
 - SSH access with **admin privilege**
-- Git installed
 
-## Installing
+## Installing via Curl
+```bash
+curl -so /tmp/edgeos-scripts.tar.gz https://www.github.com/CEnnis91/edgeos-scripts/archive/master.tar.gz
+
+cd /config
+mv scripts/ scripts_old/    # if it exists
+
+tar xzvf /tmp/edgeos-scripts.tar.gz
+mv edgeos-scripts-master/ scripts/
+```
+
+## Installing via Git
 
 If you don't have git installed yet:
 ```bash
-curl -so /tmp/cfg_debian_packages.sh https://raw.githubusercontent.com/CEnnis91/edgeos-scripts/master/utilities/cfg_debian_packages.sh
+curl -so /tmp/cfg_debian_packages.sh https://raw.githubusercontent.com/CEnnis91/edgeos-scripts/master/bin/cfg_debian_packages.sh
 
 # don't run random things from the internet without inspecting them first
 chmod +x /tmp/cfg_debian_packages.sh

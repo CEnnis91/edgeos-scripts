@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2001
-# acme_gen_keys.sh
-# quick tool to generate keys for cfg_letsencrypt_cert.sh from acme.sh documentation
+# acme_gen_keys.sh - generate keys for cfg_letsencrypt_cert.sh from acme.sh documentation
+# https://github.com/acmesh-official/acme.sh/wiki/dnsapi
 
 # provider) DNS="dns_provider"; KEYS=( PROVIDER_USERNAME PROVIDER_PASSWORD ) ;;
 format_provider() {

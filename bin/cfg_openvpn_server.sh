@@ -41,17 +41,18 @@ if check_config "interfaces openvpn $INTERFACE"; then
     exit 0
 fi
 
-# determine the proper WAN_LOCAL rule
-WAN_LOCAL_MAX="$(exec_config "show firewall name WAN_LOCAL" | grep "rule" | grep -o "[0-9]\+" | tail -n 1)"
-VPN_RULE="$((WAN_LOCAL_MAX + 10))"
+# determine the proper chain rule
+CHAIN="WAN_LOCAL"
+CHAIN_MAX="$(exec_config "show firewall name $CHAIN" | grep "rule" | grep -o "[0-9]\+" | tail -n 1)"
+VPN_RULE="$((CHAIN_MAX + 10))"
 DESCRIPTION="$(basename "$0" ".sh")-${INTERFACE}"
 
 SCRIPT=$(cat <<EOF
     # add firewall rules
-    set firewall name WAN_LOCAL rule $VPN_RULE action accept
-    set firewall name WAN_LOCAL rule $VPN_RULE description "${DESCRIPTION}"
-    set firewall name WAN_LOCAL rule $VPN_RULE destination port $PORT
-    set firewall name WAN_LOCAL rule $VPN_RULE protocol udp
+    set firewall name $CHAIN rule $VPN_RULE action accept
+    set firewall name $CHAIN rule $VPN_RULE description "${DESCRIPTION}"
+    set firewall name $CHAIN rule $VPN_RULE destination port $PORT
+    set firewall name $CHAIN rule $VPN_RULE protocol udp
 
     # add openvpn server interface
     set interfaces openvpn $INTERFACE description $DESCRIPTION

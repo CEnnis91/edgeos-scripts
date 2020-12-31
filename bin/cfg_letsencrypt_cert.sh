@@ -184,6 +184,7 @@ for key in "${KEYS[@]}"; do
 done
 
 echo "INFO: Requesting initial certificate"
+# shellcheck disable=SC2086
 "${RENEW_BIN}" ${RENEWAL_ARGS}
 
 RESULT="$?"
