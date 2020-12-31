@@ -20,7 +20,7 @@ kill_and_wait() {
 
     kill -s INT "$pid" 2> /dev/null
     # shellcheck disable=SC2009
-    ps -e | grep lighttpd | awk '{print $1;}' | sudo xargs kill
+    ps -e | grep lighttpd | awk '{print $1;}' | sudo xargs kill 2>/dev/null
     while kill -s SIGTERM "$pid" 2> /dev/null; do
         sleep 1
     done
@@ -92,16 +92,16 @@ fi
 
 ACME_TEMP="$(mktemp -d)"
 if [ $RELOAD_FLAG -eq 1 ]; then
-    RELOAD_CMD="--reloadcmd ${RELOAD_BIN} ${ACME_TEMP}"
+    RELOAD_CMD="${RELOAD_BIN} ${ACME_TEMP}"
 else
-    RELOAD_CMD=""
+    RELOAD_CMD="true"
 fi
 
 log "Executing acme.sh."
 # shellcheck disable=SC2068,SC2086
 "${ACME_DIR}/acme.sh" --issue $DNSARG $DOMAINARG --home $ACME_DIR \
     --keylength ec-384 --keypath ${ACME_TEMP}/server.key --fullchainpath ${ACME_TEMP}/full.cer \
-    --log /var/log/acme.log $RELOAD_CMD \
+    --log /var/log/acme.log --reloadcmd "$RELOAD_CMD" \
     $INSECURE_FLAG $VERBOSE_FLAG $@
 
 log "Starting gui service."
