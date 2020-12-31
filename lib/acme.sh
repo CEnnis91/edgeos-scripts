@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC1090,SC2154
-# acme.sh - acme.sh related functions
+# acme.sh
 
 __SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC1090
@@ -12,11 +12,10 @@ SUPPORT_AWS="1"
 ACME_DIR="${ETC_DIR}/acme"
 ACME_SOURCE="$(mktemp)"
 DNSAPI_DIR="${ACME_DIR}/dnsapi"
-
 RELOAD_DIR="${BIN_DIR}/reload"
 
 # shellcheck disable=SC2034
-RELOAD_BIN="${RELOAD_DIR}/update_webui.sh"
+RELOAD_BIN="${RELOAD_DIR}/update_web_cert.sh"
 # shellcheck disable=SC2034
 RENEW_BIN="${BIN_DIR}/acme_renew.sh"
 

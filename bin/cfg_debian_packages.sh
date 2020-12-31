@@ -5,22 +5,30 @@
 # included from functions.sh for easier integration before git is installed
 CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
 if [[ ! -e "$CMD_WRAPPER" ]]; then
-    echo "ERROR: cannot find vyatta-cfg-cmd-wrapper"
-    exit 1
+    if [[ "$DEBUG" == "1" ]]; then
+        echo "WARNING: cannot find vyatta-cfg-cmd-wrapper"
+        CMD_WRAPPER="echo"
+    else
+        echo "ERROR: cannot find vyatta-cfg-cmd-wrapper"
+        exit 1
+    fi
+else
+    if [[ 'vyattacfg' != "$(id -ng)" ]]; then
+        exec sg vyattacfg -c "$0 $*"
+    fi
 fi
 
 check_config() {
     # shellcheck disable=SC2155
     local key="$*"
 
-    # shellcheck disable=SC2086
-    # shellcheck disable=SC2155
+    # shellcheck disable=SC2086,SC2155
     local exists="$(exec_config show $key)"
 
     case $exists in
         *is\ empty)     return 1 ;;
         *not\ valid)    echo "$exists"; return 0 ;;
-        *)              return 0 ;;
+        *)              return "$DEBUG" ;;
     esac
 }
 
@@ -38,11 +46,7 @@ exec_config() {
     "$CMD_WRAPPER" end
 }
 
-###
-
-if [[ 'vyattacfg' != "$(id -ng)" ]]; then
-    exec sg vyattacfg -c "$0 $*"
-fi
+# ---
 
 if check_config "system package"; then
     echo "INFO: Debian packages already exist in the config"

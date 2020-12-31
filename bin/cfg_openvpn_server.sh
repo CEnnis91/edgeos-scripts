@@ -3,10 +3,6 @@
 # cfg_openvpn_server.sh - add openvpn server config
 # https://help.ui.com/hc/en-us/articles/115015971688-EdgeRouter-OpenVPN-Server
 
-if [[ 'vyattacfg' != "$(id -ng)" ]]; then
-    exec sg vyattacfg -c "$0 $*"
-fi
-
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
 ROOT_DIR="$(dirname "$SELF_DIR")"
 

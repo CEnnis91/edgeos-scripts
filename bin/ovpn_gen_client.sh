@@ -19,7 +19,7 @@ TEMPLATE="$(get_template_path "$TEMPLATE_NAME")"
 
 # ensure the arguments are correct
 # other variables can be changed at the command line
-if [[ -z "$HOST" || -z "$CLIENT_PEM" || -z "$CLIENT_KEY" ]]; then
+if [[ -z "$HOST" || -z "$CLIENT_PEM" || -z "$CLIENT_KEY" || -z "$TEMPLATE" || -z "$CERT_DIR" ]]; then
     echo "ERROR: invalid arguments"
     echo "$(basename "$0") <host> <client certificate (*.pem)> <client key (*.key)> [template] [cert dir]"
     exit 1
@@ -29,7 +29,7 @@ fi
 FILES=( "${CERT_DIR}/cacert.pem" "${CERT_DIR}/ta.key" "$CLIENT_PEM" "$CLIENT_KEY" )
 for file in "${FILES[@]}"; do
     if [[ ! -e "${file}" ]]; then
-        echo "ERROR: file '$(basename "${file}")' is missing"
+        echo "ERROR: file '${file}' is missing"
         exit 1
     fi
 done
@@ -49,4 +49,5 @@ for require in $REQUIRED; do
     fi
 done
 
+# dump the config to shell
 eval "echo \"$(cat "$TEMPLATE")\""

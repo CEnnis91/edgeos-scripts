@@ -3,10 +3,6 @@
 # other services can be added from the web interface, this still uses ddclient
 # https://help.ui.com/hc/en-us/articles/204976324-EdgeRouter-Custom-Dynamic-DNS
 
-if [[ 'vyattacfg' != "$(id -ng)" ]]; then
-    exec sg vyattacfg -c "$0 $*"
-fi
-
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
 ROOT_DIR="$(dirname "$SELF_DIR")"
 
@@ -25,6 +21,7 @@ if [[ -z "$SUBDOMAIN" || -z "$LOGIN" || -z "$PASSWORD" || -z "$INTERFACE" ]]; th
     exit 1
 fi
 
+# TODO: refactor out to support more providers
 API_SERVER="api.cloudflare.com/client/v4"
 DOMAIN="$(echo "$SUBDOMAIN" | awk -F. '{print $(NF-1) FS $NF}')"
 SERVICE_NAME="custom-${SUBDOMAIN//.}"

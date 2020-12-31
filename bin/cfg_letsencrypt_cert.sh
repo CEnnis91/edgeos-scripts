@@ -3,22 +3,38 @@
 # cfg_letsencrypt_cert.sh - request for and renew let's encrypt certificate
 # https://github.com/hungnguyenm/edgemax-acme
 
-if [[ 'vyattacfg' != "$(id -ng)" ]]; then
-    exec sg vyattacfg -c "$0 $*"
-fi
-
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
 ROOT_DIR="$(dirname "$SELF_DIR")"
 
 . "${ROOT_DIR}/lib/acme.sh"
 . "${ROOT_DIR}/lib/vyatta.sh"
 
-GUI_SERVER_PEM="${ETC_DIR}/ssl"
+generate_help() {
+    local provider="$1"
+    local keys=""
+
+    keys="$(grep "[ \t]${provider})[ \t]" "$0" | cut -d'(' -f2 | cut -d')' -f1 | head -n1)"
+
+    if [[ -n "$keys" ]]; then
+        keys="$(echo "$keys" | xargs | sed -e 's/\(\w*\)/<\1>/g')"
+        echo "$(basename "$0") <subdomain> ${provider} ${keys}"
+    else
+        echo "ERROR: Unknown provider '${provider}'"
+        exit 2
+    fi
+}
+
 RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
 RENEW_TASK="renew.${SUBDOMAIN}"
+SSL_DIR="${ETC_DIR}/ssl"
 
 SUBDOMAIN="$1"
 PROVIDER="$2"
+
+if [[ "$SUBDOMAIN" == "help" && -n "$PROVIDER" ]]; then
+    generate_help "$PROVIDER"
+    exit 1
+fi
 
 # ensure the arguments are correct
 if [[ -z "$SUBDOMAIN" || -z "$PROVIDER" || "$#" -lt 3 ]]; then
@@ -148,10 +164,7 @@ case "$PROVIDER" in
 
     # https://github.com/acmesh-official/acme.sh/wiki/How-to-use-OVH-domain-api
     ovh)            DNS="dns_ovh"; KEYS=( OVH_AK OVH_AS ) ;;
-
-    *)              echo "ERROR: Unknown provider '${PROVIDER}'"
-                    exit 2
-                    ;;
+    *)              echo "ERROR: Unknown provider '${PROVIDER}'"; exit 2 ;;
 esac
 
 # ensure we have the provider downloaded
@@ -166,6 +179,7 @@ for key in "${KEYS[@]}"; do
         RENEWAL_ARGS="${RENEWAL_ARGS} -t ${key} -k ${VALUES[${index}]}"
     else
         echo "ERROR: Invalid key-value pair '${key}:${value}'"
+        generate_help "$PROVIDER"
         exit 3
     fi
 done
@@ -180,16 +194,16 @@ if [[ "$RESULT" != "0" ]]; then
 fi
 
 if check_config "service gui cert-file"; then
-    echo "INFO: service gui cert-file already exists in the config"
+    echo "INFO: service gui cert-file already exists in the config, not changing"
     exec_config "show service gui cert-file"
 else
     echo "INFO: Adding gui cert-file to the config"
-    exec_config "set service gui cert-file ${GUI_SERVER_PEM}"
+    exec_config "set service gui cert-file $SSL_DIR"
 fi
 
-if check_config "system task-scheduler task ${RENEW_TASK}"; then
+if check_config "system task-scheduler task $RENEW_TASK"; then
     echo "INFO: system task-scheduler task '${RENEW_TASK}' already exists in the config"
-    exec_config "show system task-scheduler task ${RENEW_TASK}"
+    exec_config "show system task-scheduler task $RENEW_TASK"
     exit 0
 fi
 

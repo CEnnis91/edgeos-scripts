@@ -1,12 +1,12 @@
 #!/bin/bash
-# openvpn.sh - openvpn specific functions
+# openvpn.sh
 
-__SELF_DIR="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+__SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC1090
 . "${__SELF_DIR}/globals.sh"
 
 DEFAULT_INTERFACE="vtun0"
-DEFAULT_TEMPLATE="basic"
+DEFAULT_TEMPLATE="simple"
 OPENVPN_DIR="${ETC_DIR}/openvpn"
 TEMPLATE_DIR="${SHARE_DIR}/ovpn"
 

@@ -1,12 +1,15 @@
 #!/bin/bash
-# acme_reload.sh - moves certificates to the proper location for web gui
+# update_web_cert.sh - moves certificates to the proper location for web gui
 # based on https://github.com/hungnguyenm/edgemax-acme
 
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
-ROOT_DIR="$(dirname "$SELF_DIR")"
-SSL_DIR="${ROOT_DIR}/secure/ssl"
+ROOT_DIR="$(dirname "$(dirname "$SELF_DIR")")"
+
+# shellcheck disable=SC1090
+. "${ROOT_DIR}/lib/acme.sh"
 
 BASE_DIR="${1:-/tmp}"
+SSL_DIR="${ETC_DIR}/ssl"
 mkdir -p "$SSL_DIR"
 
 if [[ -e "${BASE_DIR}/server.key" && -e "${BASE_DIR}/full.cer" ]]; then

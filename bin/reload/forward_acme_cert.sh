@@ -1,9 +1,11 @@
 #!/bin/bash
-# acme_forward.sh - scp the new certificate to another server
+# forward_acme_cert.sh - scp the new certificate to another server
 
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
-ROOT_DIR="$(dirname "$SELF_DIR")"
-ACME_DIR="${ROOT_DIR}/secure/acme"
+ROOT_DIR="$(dirname "$(dirname "$SELF_DIR")")"
+
+# shellcheck disable=SC1090
+. "${ROOT_DIR}/lib/acme.sh"
 
 usage() {
     echo "Usage: $0 -s <my.subdomain.com> -r <my.remotehost.com>" \
