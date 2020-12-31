@@ -24,12 +24,9 @@ generate_help() {
     fi
 }
 
-RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
-RENEW_TASK="renew.${SUBDOMAIN}"
-SSL_DIR="${ETC_DIR}/ssl"
-
 SUBDOMAIN="$1"
 PROVIDER="$2"
+SSL_DIR="${ETC_DIR}/ssl"
 
 if [[ "$SUBDOMAIN" == "help" && -n "$PROVIDER" ]]; then
     generate_help "$PROVIDER"
@@ -169,14 +166,16 @@ esac
 
 # ensure we have the provider downloaded
 get_acme_dnsapi "$PROVIDER"
+RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
+RENEW_TASK="renew.${SUBDOMAIN}"
 
 index=0
 for key in "${KEYS[@]}"; do
     value="${VALUES[${index}]}"
-    index=$((index+1))
 
     if [[ -n "$key" && -n "$value" ]]; then
         RENEWAL_ARGS="${RENEWAL_ARGS} -t ${key} -k ${VALUES[${index}]}"
+        index=$((index+1))
     else
         echo "ERROR: Invalid key-value pair '${key}:${value}'"
         generate_help "$PROVIDER"
@@ -185,7 +184,7 @@ for key in "${KEYS[@]}"; do
 done
 
 echo "INFO: Requesting initial certificate"
-"${RENEW_BIN} ${RENEWAL_ARGS}"
+echo "[${RENEW_BIN} ${RENEWAL_ARGS}]"
 
 RESULT="$?"
 if [[ "$RESULT" != "0" ]]; then
