@@ -3,18 +3,18 @@
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
 # included from functions.sh for easier integration before git is installed
-CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
-if [[ ! -e "$CMD_WRAPPER" ]]; then
-    if [[ "$DEBUG" == "1" ]]; then
-        echo "WARNING: cannot find vyatta-cfg-cmd-wrapper"
-        CMD_WRAPPER="echo"
-    else
+if [[ "$DEBUG" == "1" ]]; then
+    CMD_WRAPPER="echo"
+else
+    CMD_WRAPPER="/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper"
+
+    if [[ ! -e "$CMD_WRAPPER" ]]; then
         echo "ERROR: cannot find vyatta-cfg-cmd-wrapper"
         exit 1
-    fi
-else
-    if [[ 'vyattacfg' != "$(id -ng)" ]]; then
-        exec sg vyattacfg -c "$0 $*"
+    else
+        if [[ 'vyattacfg' != "$(id -ng)" ]]; then
+            exec sg vyattacfg -c "$0 $*"
+        fi
     fi
 fi
 
