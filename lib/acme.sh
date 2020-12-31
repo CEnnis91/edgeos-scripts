@@ -20,7 +20,7 @@ RELOAD_BIN="${RELOAD_DIR}/update_web_cert.sh"
 RENEW_BIN="${BIN_DIR}/acme_renew.sh"
 
 get_acme_sh() {
-    local revision="${1:-master}"
+    local revision="${1:-${ACME_REVISION}}"
     local script="${ACME_DIR}/acme.sh"
 
     if [[ ! -d "$ACME_DIR" ]]; then
@@ -35,8 +35,8 @@ get_acme_sh() {
 }
 
 get_acme_dnsapi() {
-    local revision="${1:-master}"
-    local dnsapi="$2"
+    local dnsapi="$1"
+    local revision="${2:-${ACME_REVISION}}"
     local script="${DNSAPI_DIR}/dns_${dnsapi}.sh"
 
     get_acme_sh "$revision"
@@ -45,7 +45,7 @@ get_acme_dnsapi() {
         mkdir -p "$DNSAPI_DIR"
     fi
 
-    if [[ ! -x "${script}" ]]; then
+    if [[ -n "$dnsapi" && ! -x "${script}" ]]; then
         curl -so "$script" "https://raw.githubusercontent.com/acmesh-official/acme.sh/${revision}/dnsapi/dns_${dnsapi}.sh"
         chmod +x "$script"
     fi
@@ -59,7 +59,7 @@ sed -i 's/^\(main "$@"\)$/# \1/g' "$ACME_SOURCE"
 
 . "$ACME_SOURCE"
 if [[ "$SUPPORT_AWS" == "1" ]]; then
-    get_acme_dnsapi "$ACME_REVISION" "aws"
+    get_acme_dnsapi "aws" "$ACME_REVISION"
     . "${DNSAPI_DIR}/dns_aws.sh"
 fi
 
