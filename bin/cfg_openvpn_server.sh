@@ -16,7 +16,7 @@ NAME_SERVER="${4:-192.168.1.1}"
 CERT_DIR="$5"
 
 if [[ -z "$CERT_DIR" || ! -d "$CERT_DIR" ]]; then
-    CERT_DIR="$(get_server_dir "$INTERFACE")"
+    CERT_DIR="$(get_server_path "$INTERFACE")"
 fi
 
 # ensure the arguments are correct
