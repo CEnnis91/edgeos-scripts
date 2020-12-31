@@ -30,7 +30,7 @@ check_config() {
     case $exists in
         *is\ empty)     return 1 ;;
         *not\ valid)    echo "$exists"; return 0 ;;
-        *)              return "$DEBUG" ;;
+        *)              return $DEBUG ;;
     esac
 }
 
