@@ -101,7 +101,7 @@ log "Executing acme.sh."
 # shellcheck disable=SC2068,SC2086
 "${ACME_DIR}/acme.sh" --issue $DNSARG $DOMAINARG --home $ACME_DIR \
     --keylength ec-384 --keypath ${ACME_TEMP}/server.key --fullchainpath ${ACME_TEMP}/full.cer \
-    --log /var/log/acme.log "$RELOAD_CMD" \
+    --log /var/log/acme.log $RELOAD_CMD \
     $INSECURE_FLAG $VERBOSE_FLAG $@
 
 log "Starting gui service."
