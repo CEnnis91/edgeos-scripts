@@ -7,13 +7,6 @@ ROOT_DIR="$(dirname "$SELF_DIR")"
 # shellcheck disable=SC1090
 . "${ROOT_DIR}/lib/vyatta.sh"
 
-# ensure the arguments are correct
-if [[ -z "$ACME_DIR" ]]; then
-    echo "ERROR: invalid arguments"
-    echo "$(basename "$0") <acme-dir>"
-    exit 1
-fi
-
 PACKAGE_BIN="${BIN_DIR}/reload/package_acme_certs.sh"
 PACKAGE_TASK="package.acme.certs"
 
