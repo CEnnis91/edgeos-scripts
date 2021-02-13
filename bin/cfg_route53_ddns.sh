@@ -20,13 +20,11 @@ if [[ -z "$SUBDOMAIN" || -z "$ACCESS_KEY" || -z "$SECRET_KEY" || -z "$INTERFACE"
 fi
 
 UPDATE_BIN="${BIN_DIR}/route53_update_record.sh"
-UPDATE_TASK="rt53.update.${SUBDOMAIN}"
+UPDATE_TASK="route53-update-${SUBDOMAIN}"
 UPDATE_ARGS="${SUBDOMAIN} ${ACCESS_KEY} ${SECRET_KEY} ${INTERFACE}"
 
 if check_config "system task-scheduler task $UPDATE_TASK"; then
-    echo "INFO: system task-scheduler task '${UPDATE_TASK}' already exists in the config"
-    exec_config "show system task-scheduler task $UPDATE_TASK"
-    exit 0
+    exec_config "delete system task-scheduler task $UPDATE_TASK"
 fi
 
 SCRIPT=$(cat <<EOF

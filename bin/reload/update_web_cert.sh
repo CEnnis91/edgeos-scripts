@@ -8,6 +8,7 @@ ROOT_DIR="$(dirname "$(dirname "$SELF_DIR")")"
 # shellcheck disable=SC1090
 . "${ROOT_DIR}/lib/acme.sh"
 
+# create the certificate for the web interface
 BASE_DIR="${1:-/tmp}"
 SSL_DIR="${ETC_DIR}/ssl"
 mkdir -p "$SSL_DIR"

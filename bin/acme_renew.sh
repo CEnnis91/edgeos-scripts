@@ -104,5 +104,16 @@ log "Executing acme.sh."
     --log /var/log/acme.log --reloadcmd "$RELOAD_CMD" \
     $INSECURE_FLAG $VERBOSE_FLAG $@
 
+# package the acme directory
+TAR_FILE="${ETC_DIR}/acme.tar.gz"
+if [[ -f "$TAR_FILE" ]]; then
+	mv -f "$TAR_FILE" "${TAR_FILE}.old"
+fi
+
+if [[ -d "$ACME_DIR" && -d "$ETC_DIR" ]]; then
+    # shellcheck disable=SC2164
+	( cd "$ETC_DIR"; tar czf "$TAR_FILE" "acme" )
+fi
+
 log "Starting gui service."
 /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf

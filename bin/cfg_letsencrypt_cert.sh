@@ -167,7 +167,7 @@ esac
 # ensure we have the provider downloaded
 get_acme_dnsapi "$PROVIDER"
 RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
-RENEW_TASK="renew.${SUBDOMAIN}"
+RENEW_TASK="renew-${SUBDOMAIN/./-}"
 
 index=0
 for key in "${KEYS[@]}"; do
@@ -193,21 +193,14 @@ if [[ "$RESULT" != "0" ]]; then
     exit $RESULT
 fi
 
-if check_config "service gui cert-file"; then
-    echo "INFO: service gui cert-file already exists in the config, not changing"
-    exec_config "show service gui cert-file"
-else
-    echo "INFO: Adding gui cert-file to the config"
-    exec_config "set service gui cert-file $SSL_DIR"
-fi
-
 if check_config "system task-scheduler task $RENEW_TASK"; then
-    echo "INFO: system task-scheduler task '${RENEW_TASK}' already exists in the config"
-    exec_config "show system task-scheduler task $RENEW_TASK"
-    exit 0
+    exec_config "delete system task-scheduler task $RENEW_TASK"
 fi
 
 SCRIPT=$(cat <<EOF
+    # set the ssl certificate
+    set service gui cert-file ${SSL_DIR}/server.pem
+
     # set renewal task
     set system task-scheduler task $RENEW_TASK executable path $RENEW_BIN
     set system task-scheduler task $RENEW_TASK interval 1d

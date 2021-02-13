@@ -24,12 +24,10 @@ fi
 # TODO: refactor out to support more providers
 API_SERVER="api.cloudflare.com/client/v4"
 DOMAIN="$(echo "$SUBDOMAIN" | awk -F. '{print $(NF-1) FS $NF}')"
-SERVICE_NAME="custom-${SUBDOMAIN//.}"
+SERVICE_NAME="custom-${SUBDOMAIN/./-}"
 
 if check_config "service dns dynamic interface $INTERFACE service $SERVICE_NAME"; then
-    echo "INFO: Dynamic DNS service already exists in the config"
-    exec_config "show service dns dynamic interface $INTERFACE"
-    exit 0
+    exec_config "delete service dns dynamic interface $INTERFACE service $SERVICE_NAME"
 fi
 
 SCRIPT=$(cat <<EOF

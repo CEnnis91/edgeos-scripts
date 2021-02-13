@@ -48,13 +48,11 @@ exec_config() {
 
 # ---
 
-if check_config "system package"; then
-    echo "INFO: Debian packages already exist in the config"
-    exec_config "show system package"
-    exit 0
+DISTRO="${1:-stretch}"
+if check_config "system package repository $DISTRO"; then
+    exec_config "delete system package repository $DISTRO"
 fi
 
-DISTRO="${1:-stretch}"
 SCRIPT=$(cat <<EOF
     set system package repository $DISTRO components 'main contrib non-free'
     set system package repository $DISTRO distribution $DISTRO
