@@ -24,7 +24,7 @@ fi
 # TODO: refactor out to support more providers
 API_SERVER="api.cloudflare.com/client/v4"
 DOMAIN="$(echo "$SUBDOMAIN" | awk -F. '{print $(NF-1) FS $NF}')"
-SERVICE_NAME="custom-${SUBDOMAIN/./-}"
+SERVICE_NAME="custom-${SUBDOMAIN//./-}"
 
 SCRIPT=$(cat <<EOF
     set service dns dynamic interface $INTERFACE service $SERVICE_NAME host-name $SUBDOMAIN
