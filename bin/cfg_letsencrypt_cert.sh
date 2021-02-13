@@ -193,10 +193,6 @@ if [[ "$RESULT" != "0" ]]; then
     exit $RESULT
 fi
 
-if check_config "system task-scheduler task $RENEW_TASK"; then
-    exec_config "delete system task-scheduler task $RENEW_TASK"
-fi
-
 SCRIPT=$(cat <<EOF
     # set the ssl certificate
     set service gui cert-file ${SSL_DIR}/server.pem
@@ -208,6 +204,10 @@ SCRIPT=$(cat <<EOF
     commit
 EOF
 )
+
+if check_config "system task-scheduler task $RENEW_TASK"; then
+    SCRIPT="$(echo -e "delete system task-scheduler task ${RENEW_TASK}\n${SCRIPT}")"
+fi
 
 echo "INFO: Adding renewal task to the config"
 exec_config "$SCRIPT"

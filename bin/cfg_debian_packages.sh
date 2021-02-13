@@ -49,10 +49,6 @@ exec_config() {
 # ---
 
 DISTRO="${1:-stretch}"
-if check_config "system package repository $DISTRO"; then
-    exec_config "delete system package repository $DISTRO"
-fi
-
 SCRIPT=$(cat <<EOF
     set system package repository $DISTRO components 'main contrib non-free'
     set system package repository $DISTRO distribution $DISTRO
@@ -60,6 +56,10 @@ SCRIPT=$(cat <<EOF
     commit
 EOF
 )
+
+if check_config "system package repository $DISTRO"; then
+    SCRIPT="$(echo -e "delete system package repository ${DISTRO}\n${SCRIPT}")"
+fi
 
 echo "INFO: Adding Debian packages to the config"
 exec_config "$SCRIPT"

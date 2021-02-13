@@ -26,10 +26,6 @@ API_SERVER="api.cloudflare.com/client/v4"
 DOMAIN="$(echo "$SUBDOMAIN" | awk -F. '{print $(NF-1) FS $NF}')"
 SERVICE_NAME="custom-${SUBDOMAIN/./-}"
 
-if check_config "service dns dynamic interface $INTERFACE service $SERVICE_NAME"; then
-    exec_config "delete service dns dynamic interface $INTERFACE service $SERVICE_NAME"
-fi
-
 SCRIPT=$(cat <<EOF
     set service dns dynamic interface $INTERFACE service $SERVICE_NAME host-name $SUBDOMAIN
     set service dns dynamic interface $INTERFACE service $SERVICE_NAME login $LOGIN
@@ -40,6 +36,10 @@ SCRIPT=$(cat <<EOF
     commit
 EOF
 )
+
+if check_config "service dns dynamic interface $INTERFACE service $SERVICE_NAME"; then
+    SCRIPT="$(echo -e "delete service dns dynamic interface $INTERFACE service ${SERVICE_NAME}\n${SCRIPT}")"
+fi
 
 echo "INFO: Adding dynamic DNS service for $SUBDOMAIN to the config"
 echo "INFO: To show the status use: 'show dns dynamic status'"

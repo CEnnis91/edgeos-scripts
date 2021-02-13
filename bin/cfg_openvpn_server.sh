@@ -41,11 +41,6 @@ fi
 
 # determine the proper chain rule
 CHAIN="WAN_LOCAL"
-
-if check_config "firewall name $CHAIN interfaces openvpn $INTERFACE"; then
-    exec_config "delete interfaces openvpn $INTERFACE"
-fi
-
 TAG="[$(basename "$0" ".sh")]"
 DESCRIPTION="OpenVPN for ${INTERFACE}"
 
@@ -56,12 +51,15 @@ EXISTING_RULE="$(echo "$CHAIN_RULES" | grep "$TAG" | awk '{print $2}')"
 
 if [[ -n "$EXISTING_RULE" ]]; then
     VPN_RULE="$EXISTING_RULE"
+    CLEAR_RULE_FIRST="delete firewall name $CHAIN rule $VPN_RULE"
 else
     VPN_RULE="$((HIGHEST_RULE + 10))"
+    CLEAR_RULE_FIRST=""
 fi
 
 SCRIPT=$(cat <<EOF
     # add firewall rules
+    $CLEAR_RULE_FIRST
     set firewall name $CHAIN rule $VPN_RULE action accept
     set firewall name $CHAIN rule $VPN_RULE description "${DESCRIPTION} ${TAG}"
     set firewall name $CHAIN rule $VPN_RULE destination port $PORT
@@ -97,6 +95,10 @@ SCRIPT=$(cat <<EOF
     commit
 EOF
 )
+
+if check_config "firewall name $CHAIN interfaces openvpn $INTERFACE"; then
+    SCRIPT="$(echo -e "delete interfaces openvpn ${INTERFACE}\n${SCRIPT}")"
+fi
 
 echo "INFO: Adding OpenVPN interface to the config"
 echo "INFO: You must manually add your own routes after"

@@ -23,10 +23,6 @@ UPDATE_BIN="${BIN_DIR}/route53_update_record.sh"
 UPDATE_TASK="route53-update-${SUBDOMAIN}"
 UPDATE_ARGS="${SUBDOMAIN} ${ACCESS_KEY} ${SECRET_KEY} ${INTERFACE}"
 
-if check_config "system task-scheduler task $UPDATE_TASK"; then
-    exec_config "delete system task-scheduler task $UPDATE_TASK"
-fi
-
 SCRIPT=$(cat <<EOF
     # set renewal task
     set system task-scheduler task $UPDATE_TASK executable path $UPDATE_BIN
@@ -35,6 +31,10 @@ SCRIPT=$(cat <<EOF
     commit
 EOF
 )
+
+if check_config "system task-scheduler task $UPDATE_TASK"; then
+    SCRIPT="$(echo -e "delete system task-scheduler task ${UPDATE_TASK}\n${SCRIPT}")"
+fi
 
 echo "INFO: Adding update task to the config"
 exec_config "$SCRIPT"
