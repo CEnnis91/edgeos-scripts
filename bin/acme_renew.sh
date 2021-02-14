@@ -39,7 +39,7 @@ RELOAD_FLAG=1
 VERBOSE_FLAG=""
 
 # first parse our options
-while getopts "f:hivd:n:t:k:r:" opt; do
+while getopts ":fhivd:n:t:k:r:" opt; do
     case $opt in
         d) DOMAINS+=("$OPTARG");;
         f) FORCE_FLAG="--force";;
