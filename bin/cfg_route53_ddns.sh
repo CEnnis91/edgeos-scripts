@@ -37,6 +37,7 @@ if check_config "system task-scheduler task $UPDATE_TASK"; then
 fi
 
 echo "INFO: Running initial task"
+# shellcheck disable=SC2086
 "${UPDATE_BIN}" $UPDATE_ARGS
 
 RESULT="$?"
