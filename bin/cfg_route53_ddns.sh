@@ -20,7 +20,7 @@ if [[ -z "$SUBDOMAIN" || -z "$ACCESS_KEY" || -z "$SECRET_KEY" || -z "$INTERFACE"
 fi
 
 UPDATE_BIN="${BIN_DIR}/route53_update_record.sh"
-UPDATE_TASK="route53-update-${SUBDOMAIN}"
+UPDATE_TASK="route53-update-${SUBDOMAIN//./_}"
 UPDATE_ARGS="${SUBDOMAIN} ${ACCESS_KEY} ${SECRET_KEY} ${INTERFACE}"
 
 SCRIPT=$(cat <<EOF
