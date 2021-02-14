@@ -13,8 +13,8 @@ mkdir -p "$PACKAGE_DIR"
 PACKAGES="$(find "$PACKAGE_DIR" -name '*.deb')"
 
 for package in $PACKAGES; do
-    name="$(dpkg --info "$package" | grep "Package:" | cut -d' ' -f2-)"
-    installed="$(dpkg-query -W --showformat='${Status}\n' "$package" | grep "installed")"
+    name="$(dpkg --info "$package" | grep "Package:" | awk -F' ' '{print $NF}')"
+    installed="$(dpkg-query -W --showformat='${Status}\n' "$name" | grep "installed")"
 
     if [[ -z "$installed" ]]; then
         echo "INFO: ${name} is not installed, installing"
