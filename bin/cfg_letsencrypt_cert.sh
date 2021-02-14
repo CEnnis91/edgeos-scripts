@@ -185,7 +185,7 @@ done
 
 echo "INFO: Requesting initial certificate"
 # shellcheck disable=SC2086
-"${RENEW_BIN}" ${RENEWAL_ARGS} --force
+"${RENEW_BIN}" ${RENEWAL_ARGS} -f
 
 RESULT="$?"
 if [[ "$RESULT" != "0" ]]; then

@@ -33,6 +33,7 @@ log() {
     fi
 }
 
+FORCE_FLAG=""
 INSECURE_FLAG=""
 RELOAD_FLAG=1
 VERBOSE_FLAG=""
@@ -41,6 +42,7 @@ VERBOSE_FLAG=""
 while getopts ":hivd:n:t:k:r:" opt; do
     case $opt in
         d) DOMAINS+=("$OPTARG");;
+        f) FORCE_FLAG="--force";;
         i) INSECURE_FLAG="--insecure";;
         n) DNS=$OPTARG;;
         t) TAGS+=("$OPTARG");;
@@ -102,7 +104,7 @@ log "Executing acme.sh."
 "${ACME_DIR}/acme.sh" --issue $DNSARG $DOMAINARG --home $ACME_DIR \
     --keylength ec-384 --keypath ${ACME_TEMP}/server.key --fullchainpath ${ACME_TEMP}/full.cer \
     --log /var/log/acme.log --reloadcmd "$RELOAD_CMD" \
-    $INSECURE_FLAG $VERBOSE_FLAG $@
+    $INSECURE_FLAG $VERBOSE_FLAG $FORCE_FLAG $@
 
 # package the acme directory
 TAR_FILE="${ETC_DIR}/acme.tar.gz"
