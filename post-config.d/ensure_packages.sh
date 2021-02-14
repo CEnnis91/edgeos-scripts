@@ -9,6 +9,7 @@ ROOT_DIR="$(dirname "$SELF_DIR")"
 . "${ROOT_DIR}/lib/vyatta.sh"
 
 PACKAGE_DIR="${SHARE_DIR}/packages"
+mkdir -p "$PACKAGE_DIR"
 PACKAGES="$(find "$PACKAGE_DIR" -name '*.deb')"
 
 for package in $PACKAGES; do
