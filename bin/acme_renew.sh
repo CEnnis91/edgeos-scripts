@@ -82,7 +82,7 @@ for i in "${!TAGS[@]}"; do
 done
 
 log "Stopping gui service."
-if [ -e "/var/run/lighttpd.pid" ]; then
+if [[ -e "/var/run/lighttpd.pid" || -n "$(pidof lighttpd)" ]]; then
     if command -v killall >/dev/null 2>&1; then
         killall lighttpd
         # shellcheck disable=SC2009
