@@ -8,7 +8,7 @@ I prefer to install this through git, but some routers have smaller filesystems,
 
 ## Prerequisites
 
-- SSH access with **admin privilege**
+- SSH access with **admin privileges**
 
 ## Installing via Curl
 ```bash
@@ -49,6 +49,7 @@ TODO, I'm not sure what I plan to do with this yet.
 # Acknowledgements
 
 - [EdgeRouter - Add Debian Packages to EdgeOS](https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS)
+- [Install EdgeOS Packages Script V1.0 with Upgrade Persistence](https://community.ui.com/questions/cf737894-174c-4aef-8aed-ebcfe62f5cff)
 - [EdgeRouter - Custom Dynamic DNS](https://help.ui.com/hc/en-us/articles/204976324-EdgeRouter-Custom-Dynamic-DNS)
 - [EdgeRouter - OpenVPN Server](https://help.ui.com/hc/en-us/articles/115015971688-EdgeRouter-OpenVPN-Server)
 - https://github.com/hungnguyenm/edgemax-acme
