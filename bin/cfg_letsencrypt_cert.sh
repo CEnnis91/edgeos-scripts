@@ -166,7 +166,7 @@ esac
 
 # ensure we have the provider downloaded
 get_acme_dnsapi "$PROVIDER"
-RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS}"
+RENEWAL_ARGS="-d ${SUBDOMAIN} -n ${DNS} -r ${RELOAD_CERT:-1}"
 RENEW_TASK="renew-${SUBDOMAIN//./_}"
 
 index=0
