@@ -2,4 +2,4 @@
 
 etc/**
 !etc/.gitignore
-share/packages/**.deb
+share/packages/*.deb
