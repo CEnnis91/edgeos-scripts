@@ -36,5 +36,14 @@ if check_config "system task-scheduler task $UPDATE_TASK"; then
     SCRIPT="$(echo -e "delete system task-scheduler task ${UPDATE_TASK}\n${SCRIPT}")"
 fi
 
+echo "INFO: Running initial task"
+"${UPDATE_BIN}" $UPDATE_ARGS
+
+RESULT="$?"
+if [[ "$RESULT" != "0" ]]; then
+    echo "ERROR: There was an issue running the initial task"
+    exit $RESULT
+fi
+
 echo "INFO: Adding update task to the config"
 exec_config "$SCRIPT"
