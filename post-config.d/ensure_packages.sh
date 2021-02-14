@@ -6,7 +6,7 @@ SELF_DIR="$(dirname "$(readlink -f "$0")")"
 ROOT_DIR="$(dirname "$SELF_DIR")"
 
 # shellcheck disable=SC1090
-. "${ROOT_DIR}/lib/vyatta.sh"
+. "${ROOT_DIR}/lib/globals.sh"
 
 PACKAGE_DIR="${SHARE_DIR}/packages"
 mkdir -p "$PACKAGE_DIR"
