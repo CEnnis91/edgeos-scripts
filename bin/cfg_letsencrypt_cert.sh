@@ -209,5 +209,9 @@ if check_config "system task-scheduler task $RENEW_TASK"; then
     SCRIPT="$(echo -e "delete system task-scheduler task ${RENEW_TASK}\n${SCRIPT}")"
 fi
 
+if check_config "service gui cert-file"; then
+    SCRIPT="$(echo -e "delete service gui cert-file\n${SCRIPT}")"
+fi
+
 echo "INFO: Adding renewal task to the config"
 exec_config "$SCRIPT"
