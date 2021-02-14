@@ -10,7 +10,7 @@ ROOT_DIR="$(dirname "$SELF_DIR")"
 
 usage() {
     echo "Usage: $0 -d <mydomain.com> [-d <additionaldomain.com>] -n <dns service>" \
-         "[-i set insecure flag] [-v enable acme verbose] [-r reload flag]" \
+         "[-i set insecure flag] [-v enable acme verbose] [-r reload flag] [-f force flag]" \
          "-t <tag> [-t <additional tag>] -k <key> [-k <additional key>]" 1>&2; exit 1;
 }
 
@@ -39,7 +39,7 @@ RELOAD_FLAG=1
 VERBOSE_FLAG=""
 
 # first parse our options
-while getopts ":hivd:n:t:k:r:" opt; do
+while getopts "f:hivd:n:t:k:r:" opt; do
     case $opt in
         d) DOMAINS+=("$OPTARG");;
         f) FORCE_FLAG="--force";;
