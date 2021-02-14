@@ -35,19 +35,15 @@ for file in "${FILES[@]}"; do
     fi
 done
 
-if check_config "interfaces openvpn $INTERFACE"; then
-    exec_config "delete interfaces openvpn $INTERFACE"
-fi
-
 # determine the proper chain rule
 CHAIN="WAN_LOCAL"
-TAG="[$(basename "$0" ".sh")]"
+TAG="$(basename "$0" ".sh")"
 DESCRIPTION="OpenVPN for ${INTERFACE}"
 
 # try to find an existing rule
-CHAIN_RULES="$(check_config "firewall name $CHAIN rule" | tr -d '\n' | grep -Po "rule.*?\".*?\"")"
+CHAIN_RULES="$(exec_config "show firewall name $CHAIN rule" | tr -d '\n' | grep -Po "rule.*?\".*?\"")"
 HIGHEST_RULE="$(echo "$CHAIN_RULES" | grep -o "[0-9]\+" | tail -n 1)"
-EXISTING_RULE="$(echo "$CHAIN_RULES" | grep "$TAG" | awk '{print $2}')"
+EXISTING_RULE="$(echo "$CHAIN_RULES" | grep "$INTERFACE.*$TAG" | awk '{print $2}' | tail -n 1)"
 
 if [[ -n "$EXISTING_RULE" ]]; then
     VPN_RULE="$EXISTING_RULE"
@@ -61,12 +57,12 @@ SCRIPT=$(cat <<EOF
     # add firewall rules
     $CLEAR_RULE_FIRST
     set firewall name $CHAIN rule $VPN_RULE action accept
-    set firewall name $CHAIN rule $VPN_RULE description "${DESCRIPTION} ${TAG}"
+    set firewall name $CHAIN rule $VPN_RULE description "${DESCRIPTION} [${TAG}]"
     set firewall name $CHAIN rule $VPN_RULE destination port $PORT
     set firewall name $CHAIN rule $VPN_RULE protocol udp
 
     # add openvpn server interface
-    set interfaces openvpn $INTERFACE description $DESCRIPTION
+    set interfaces openvpn $INTERFACE description "$DESCRIPTION"
     set interfaces openvpn $INTERFACE mode server
     set interfaces openvpn $INTERFACE server subnet $SUBNET
     set interfaces openvpn $INTERFACE server name-server $NAME_SERVER
