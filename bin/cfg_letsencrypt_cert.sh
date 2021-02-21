@@ -16,32 +16,45 @@ generate_help() {
     keys="$(grep "[ \t]${provider})[ \t]" "$0" | cut -d'(' -f2 | cut -d')' -f1 | head -n1)"
 
     if [[ -n "$keys" ]]; then
-        keys="$(echo "$keys" | xargs | sed -e 's/\(\w*\)/<\1>/g')"
-        echo "$(basename "$0") <subdomain> ${provider} ${keys}"
+        keys="$(echo "$keys" | xargs | sed -e 's/\(\w*\)/-v <\1>/g')"
+        echo "Usage: $(basename "$0") -p ${provider} -s <subdomain> ${keys}"
     else
         echo "ERROR: Unknown provider '${provider}'"
         exit 2
     fi
 }
 
-SUBDOMAIN="$1"
-PROVIDER="$2"
 SSL_DIR="${ETC_DIR}/ssl"
+VALUES=()
 
-if [[ "$SUBDOMAIN" == "help" && -n "$PROVIDER" ]]; then
-    generate_help "$PROVIDER"
-    exit 1
-fi
+while getopts ":s:p:v:hb:d:r:" opt; do
+    case $opt in
+        # [subdomain] subdomain (or wildcard domain) to request a certificate for
+        s)  SUBDOMAIN="$OPTARG" ;;
+        # [provider] which acme dnsapi provider to use
+        p)  PROVIDER="$OPTARG" ;;
+        # [value] provider specific values for dnsapi (order matters, see help)
+        v)  VALUES+=("$OPTARG") ;;
+        # display this help message and provider help (if valid)\n
+        h)  generate_getopts_help "$0" "opt";
+            echo ""
+            generate_help "$PROVIDER"
+            exit 1
+            ;;
 
-# ensure the arguments are correct
-if [[ -z "$SUBDOMAIN" || -z "$PROVIDER" || "$#" -lt 3 ]]; then
-    echo "ERROR: invalid arguments"
-    echo "$(basename "$0") <subdomain> <provider> [values]"
-    exit 1
-else
-    shift; shift
-    VALUES=( "$@" )
-fi
+        # [ssl directory] where to store the acme SSL certificates (optional)
+        d)  SSL_DIR="$OPTARG" ;;
+        # [script] script or tool to run after a successful certificate renewal (optional)
+        b)  RENEW_BIN="$OPTARG" ;;
+        # [reload] reload (0 or 1) the SSL certificate for the web UI (optional)
+        r)  RELOAD_CERT="$OPTARG" ;;
+
+        *)  echo "ERROR: invalid argument -${OPTARG}"
+            generate_getopts_help "$0" "opt"
+            exit 1
+            ;;
+    esac
+done
 
 # NOTE: not every provider has been tested, please read full documentation
 # easily add other providers from here: https://github.com/acmesh-official/acme.sh/wiki/dnsapi
@@ -184,8 +197,12 @@ for key in "${KEYS[@]}"; do
 done
 
 echo "INFO: Requesting initial certificate"
-# shellcheck disable=SC2086
-"${RENEW_BIN}" ${RENEWAL_ARGS} -f
+if [[ "$DEBUG" == "1" ]]; then
+    echo "${RENEW_BIN} ${RENEWAL_ARGS} -f"
+else
+    # shellcheck disable=SC2086
+    "${RENEW_BIN}" ${RENEWAL_ARGS} -f
+fi
 
 RESULT="$?"
 if [[ "$RESULT" != "0" ]]; then

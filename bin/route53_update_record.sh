@@ -21,18 +21,29 @@ is_naked_domain() {
     return 1
 }
 
-SUBDOMAIN="$1"
-AWS_ACCESS_KEY_ID="$2"
-AWS_SECRET_ACCESS_KEY="$3"
-INTERFACE="$4"
+while getopts ":i:a:k:s:" opt; do
+    case $opt in
+        # [interface] network interface to get the IP from
+        i)  INTERFACE="$OPTARG" ;;
+        # [access key] AWS access key
+        a)  AWS_ACCESS_KEY_ID="$OPTARG" ;;
+        # [secret key] AWS secret access key
+        k)  AWS_SECRET_ACCESS_KEY="$OPTARG" ;;
+        # [subdomain] subdomain to use with the dynamic dns
+        s)  SUBDOMAIN="$OPTARG" ;;
+
+        *)  echo "ERROR: invalid argument -${OPTARG}"
+            generate_getopts_help "$0" "opt"
+            exit 1
+            ;;
+    esac
+done
 
 # ensure the arguments are correct
 if [[ -z "$SUBDOMAIN" || -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" || -z "$INTERFACE" ]]; then
-    echo "ERROR: invalid arguments"
-    echo "$(basename "$0") <subdomain> <access-key> <secret-key> <interface>"
+    generate_getopts_help "$0" "opt"
     exit 1
 fi
-
 
 if ! aws_check_credentials; then
     _err "You haven't specifed the aws route53 api key id and and api key secret yet."
@@ -47,4 +58,9 @@ else
 fi
 
 INTERFACE_IP="$(get_interface_ip "$INTERFACE")"
-aws_update_record "$ACTION" "$SUBDOMAIN" "A" "$INTERFACE_IP"
+
+if [[ "$DEBUG" == "1" ]]; then
+    echo "aws_update_record '$ACTION' '$SUBDOMAIN' 'A' '$INTERFACE_IP'"
+else
+    aws_update_record "$ACTION" "$SUBDOMAIN" "A" "$INTERFACE_IP"
+fi

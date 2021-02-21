@@ -2,7 +2,7 @@
 # cfg_debian_packages.sh - add other debian packages
 # https://help.ui.com/hc/en-us/articles/205202560-EdgeRouter-Add-Debian-Packages-to-EdgeOS
 
-# included from functions.sh for easier integration before git is installed
+# included from vyatta.sh for easier integration before git is installed
 if [[ "$DEBUG" == "1" ]]; then
     CMD_WRAPPER="echo"
 else
@@ -48,7 +48,9 @@ exec_config() {
 
 # ---
 
-DISTRO="${1:-stretch}"
+CODENAME="$(grep "VERSION_CODENAME" "/etc/os-release" | awk -F= '{print $2}')"
+DISTRO="${1:-${CODENAME:-stretch}}"
+
 SCRIPT=$(cat <<EOF
     set system package repository $DISTRO components 'main contrib non-free'
     set system package repository $DISTRO distribution $DISTRO
