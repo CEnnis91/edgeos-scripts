@@ -1,0 +1,6 @@
+# .gitignore
+
+*
+!.gitignore
+!README.md
+!ensure_packages.sh
